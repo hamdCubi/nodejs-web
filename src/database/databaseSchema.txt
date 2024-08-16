@@ -1,0 +1,146 @@
+USERS SCHEMA
+
+"users": {
+    "_id": {
+      "type": "ObjectId",
+      "required": true
+    },
+    "name": {
+      "type": "String",
+      "required": true
+    },
+    "email": {
+      "type": "String",
+      "required": true
+    },
+    "picture": {
+      "type": "String"
+    },
+    "bio": {
+      "type": "String"
+    },
+    "reasonForBeingHere": {
+      "type": "String",
+      "enum": ["Here to Date", "Make New Friends", "Ready for a Relationship"]
+    },
+    "gender": {
+      "type": "Number"
+    },
+    "dob": {
+      "type": "Date",
+      "required": true
+    },
+    "age": {
+      "type": "Number"
+    },
+    "interestedIn": {
+      "type": "Number"
+    },
+    "height": {
+      "type": "String"
+    },
+    "address": {
+      "type": "String"
+    },
+    "country": {
+      "type": "String"
+    },
+    "city": {
+      "type": "String"
+    },
+    "postalCode": {
+      "type": "String"
+    },
+    "lat": {
+      "type": "Number"
+    },
+    "lng": {
+      "type": "Number"
+    },
+    "isVerified": {
+      "type": "Boolean"
+    },
+    "isPremium": {
+      "type": "Boolean"
+    },
+    "coordinate": {
+      "type": "String"
+    },
+    "interests": {
+      "type": ["ObjectId"],
+      "ref": "Interest"
+    },
+    "languages": {
+      "type": ["String"]
+    },
+    "photos": {
+      "type": ["String"],
+      "default":[],
+    },
+    "createdAt": {
+      "type": "Date",
+      "default": "Date.now"
+    }
+  }
+
+REPORTED USERS SCHEMA
+
+"reportedUsers": {
+    "_id": {
+      "type": "ObjectId",
+      "required": true
+    },
+    "userId": {
+      "type": "ObjectId",
+      "required": true,
+      "ref": "User"
+    },
+    "reportedUserId": {
+      "type": "ObjectId",
+      "required": true,
+      "ref": "User"
+    },
+    "reasonId": {
+      "type": "ObjectId",
+      "required": true,
+      "ref": "reportReasons"
+    }
+  }
+
+REPORT REASONS SCHEMA
+
+"reportReasons": {
+  "_id": {
+    "type": "ObjectId",
+    "required": true
+  },
+  "reason": {
+    "type": "String",
+    "required": true
+  }
+}
+
+
+"stories":{
+  "_id": "<ObjectId>",
+  "userId": "<ObjectId of the user who posted the story>",
+  "content": "Story content here...",
+  "createdAt": "<ISODate>",
+  "type":"String",
+  "metadata:"Object",
+  "text":"string"
+}
+
+"storyLikes":{
+  "_id": "<ObjectId>",
+  "storyId": "<ObjectId of the story>",
+  "userId": "<ObjectId of the user who liked the story>",
+  "createdAt": "<ISODate>"
+}
+
+"storyViewedUsers":{
+  "_id": "<ObjectId>",
+  "storyId": "<ObjectId of the story>",
+  "userId": "<ObjectId of the user who viewed the story>",
+  "viewedAt": "<ISODate>"
+}

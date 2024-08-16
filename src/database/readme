@@ -1,0 +1,38 @@
+Database schema will be placed on this folder.
+
+
+
+File upload storage
+mediaId,
+mediaUrl
+mediaKey,
+mediaMD5,
+fileSize,
+mediaUploadTime
+
+Huzaifa uploads a video
+We get MD5 of the file
+We store MD5 with filename, url and key from CDN.
+Step 4: We get 'mediaId' from table.
+We store on videos table or any other relevant table.
+
+Anas uploads a video
+We get MD5 of the file
+We check whether MD5 exists in storage table.
+If exists, re-use the same mediaId.
+If not, insert and step 4 again.
+
+Anas deletes the video
+We check whether the mediaId is used more than once.
+If so, skip deletion from CDN.
+If not, delete the mediaId together with it's relational rows, and then delete file from CDN.
+
+Multer returns req.file
+req.file is a File Object
+// https://www.npmjs.com/package/md5-file
+
+const filePath = req.file.path;
+const hash = md5File.sync(filePath)
+
+Cat: 3b56f693efbef021a598ae920a1adcd6 (200)
+Cat: 3b56f693efbef021a598ae920a1adcd6 (200 varchar)
