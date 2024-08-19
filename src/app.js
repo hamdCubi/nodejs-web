@@ -33,6 +33,7 @@ app.use((req, res, next) => {
     next();
 })
 const Topy = require('./routes/ToPy.js');
+const WebHooks= require('./routes/WebHooks.js');
 const authRoutes = require('./routes/AuthRoutes');
 const blogRoutes = require('./routes/blogsRoute');
 const GoogleAPIRoutes = require('./routes/googelAPIRoute.js');
@@ -57,6 +58,7 @@ app.get("/tocheck",async(req,res)=>{
 
 
 app.use('/api/py', Topy);
+app.use('/api/webhook', WebHooks);
 app.use('/api/auth', authRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/openai', openAIRoutes);
