@@ -68,4 +68,4 @@ jobs:
           app-name: 'nodejs-server'
           slot-name: 'Production'
           package: .
-          overwrite: true
+          clean: true
