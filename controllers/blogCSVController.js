@@ -13,7 +13,7 @@ const addCSVFile = async (req, res) => {
       const { fileName, refLinkId } = req.body;
 
       // Construct the URL with query parameters
-      const PYRes = await axios.get(`http://127.0.0.1:8000/generate_csv/${fileName}?refLinkId=${refLinkId}`);
+      const PYRes = await axios.get(`https://python-server-cubi.azurewebsites.net/generate_csv/${fileName}?refLinkId=${refLinkId}`);
 
       res.send({
           message: "Scraping process started.........",
