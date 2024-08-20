@@ -40,7 +40,7 @@ const toextractlink = async (req, res) => {
         const normalizeUrl = (await import('normalize-url')).default
         console.log(`Formatted URL: ${domainPath}`);
 
-        const pyresponse = await axios.get(`http://127.0.0.1:8000/extract_blog_links/${domainPath}`)
+        const pyresponse = await axios.get(`https://python-server-cubi.azurewebsites.net/extract_blog_links/${domainPath}`)
       console.log(pyresponse?.data)
       // newLinksExtracted(pyresponse)
         res.send({
