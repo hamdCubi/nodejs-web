@@ -8,22 +8,27 @@ const BlogModel = require('../models/blogModel');
 const BlogUniqueModel = require('../models/uniqueContentMoedels');
 const newLinksExtracted = async(pyresponse)=>{
   try {
-    if (pyresponse?.data) {
-      const existingFile = await BlogModel.findbysiteURL(normalizeUrl(pyresponse?.data?.respon?.site_link));
+    const normalizeUrl = (await import('normalize-url')).default
+
+    console.log(pyresponse,normalizeUrl(pyresponse?.site_link))
+    if (pyresponse) {
+      const existingFile = await BlogModel.findbysiteURL(normalizeUrl(pyresponse?.site_link));
+      console.log(existingFile)
       if (existingFile) {
         console.log("pehle s existsssss+++++++++++++++--",existingFile)
-         await BlogModel.delete(normalizeUrl(pyresponse?.data?.respon?.site_link)); // Assuming this deletes by user ID and siteURL
+         await BlogModel.delete(normalizeUrl(pyresponse?.site_link)); // Assuming this deletes by user ID and siteURL
          const  csvFileId = await BlogCSVModel.deletebyRef(existingFile?._id);
         await BlogUniqueModel.delete(csvFileId?._id); // Adjust according to your schema
         await BlogSimilarModel.delete(csvFileId?._id); // Adjust according to your schema
       }
 
       // Add new link file
-      await BlogModel.AddNewFile(pyresponse?.data?.respon?.fileName, normalizeUrl(pyresponse?.data?.respon?.site_link));
+      await BlogModel.AddNewFile(pyresponse?.fileName, normalizeUrl(pyresponse?.site_link));
+      return "huaa"
     }
     
   } catch (error) {
-    return error
+    console.log(error)
   }
 }
 const toextractlink = async (req, res) => {
@@ -35,7 +40,7 @@ const toextractlink = async (req, res) => {
         const normalizeUrl = (await import('normalize-url')).default
         console.log(`Formatted URL: ${domainPath}`);
 
-        const pyresponse = await axios.get(`https://python-server-cubi.azurewebsites.net/extract_blog_links/${domainPath}`)
+        const pyresponse = await axios.get(`http://127.0.0.1:8000/extract_blog_links/${domainPath}`)
       console.log(pyresponse?.data)
       // newLinksExtracted(pyresponse)
         res.send({
@@ -50,7 +55,8 @@ const toextractlink = async (req, res) => {
   const WEBHOOKLINKEXT =async(req,res)=>{
 try {
   const { message, respon } = req.body;
-  newLinksExtracted(respon?.data)
+  console.log(respon,message)
+ await newLinksExtracted(respon)
   res.send("done")
 } catch (error) {
   console.error("Error in try-catch block:[", catchError);
