@@ -33,6 +33,7 @@
     "nodemon": "^3.0.3",
     "normalize-url": "^8.0.1",
     "openai": "^4.53.1",
-    "pandas": "^0.0.3"
+    "pandas": "^0.0.3",
+    "socket.io": "^4.7.5"
   }
 }

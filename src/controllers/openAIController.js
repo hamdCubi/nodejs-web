@@ -22,6 +22,7 @@ try {
       res.send(completion.choices[0].message.content)
 } catch (error) {
     res.status(500).send(error)
+    console.log(error)
 }
 }
 module.exports = {getKeywords}
