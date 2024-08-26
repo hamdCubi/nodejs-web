@@ -12,7 +12,7 @@ try {
             content: "You are a helpful assistant designed to output JSON.",
           },
          
-          { role: "user", content: `Genrate me a JSON data of Relevent seo related single word OR two word keywords according to the topic below , always return keywords with key "keywords".
+          { role: "user", content: `Genrate me a JSON data of Relevent seo focus keywords for content marketing in dubai according to the topic below , always return keywords with key "keywords".
             "${topic}"` },
         ],
         model: "gpt-4o-mini",
@@ -22,6 +22,7 @@ try {
       res.send(completion.choices[0].message.content)
 } catch (error) {
     res.status(500).send(error)
+    console.log(error)
 }
 }
 module.exports = {getKeywords}

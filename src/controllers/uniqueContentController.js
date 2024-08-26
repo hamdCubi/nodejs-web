@@ -5,6 +5,9 @@ const BlogUniqueModel = require('../models/uniqueContentMoedels');
 const BlogCSVModel = require('../models/CSVModels');
 const axios = require('axios');
 
+const ADDUniqueFileCallBack = async()=>{
+
+}
 const addUniqueFile = async (req, res) => {
     try {
       
@@ -14,16 +17,20 @@ const addUniqueFile = async (req, res) => {
 
       const check = await BlogUniqueModel.CheckByBaseSorce(baseFileId,sourceFileId)
       if (check) {
-      const theJSONDataU = await axios.get(`https://python-server-cubi.azurewebsites.net/uniqueFolder/${check?.content}`);
+        console.log("already exist")
+      const theJSONDataU = await axios.get(`http://4.213.60.40:8000/uniqueFolder/${check?.content}`);
+     
       res.send(
        { JSONIS:theJSONDataU?.data,
           time:check.timestamp
        });
       return 
       }
-      const ressponse = await axios.get(`https://python-server-cubi.azurewebsites.net/unique_content/${BasefileName}/${SourcefileName}`);
-      const theJSONDataU = await axios.get(`https://python-server-cubi.azurewebsites.net/uniqueFolder/${ressponse?.data?.JSON_FileName}`);
 
+      const ressponse = await axios.get(`http://4.213.60.40:8000/unique_content/${BasefileName}/${SourcefileName}`);
+      console.log(ressponse.data)
+      const theJSONDataU = await axios.get(`http://4.213.60.40:8000/uniqueFolder/${ressponse?.data?.JSON_FileName}`);
+console.log(theJSONDataU)
 
       const insert = await BlogUniqueModel.AddNewUniqueFile(baseFileId,sourceFileId,ressponse?.data?.JSON_FileName)
       res.send({
@@ -31,10 +38,11 @@ const addUniqueFile = async (req, res) => {
         time:Date.now()
       });
     } catch (catchError) {
-      console.error("Error in try-catch block:", catchError.message);
+      console.error("Error in try-catch block:", catchError);
       res.status(500).json({ error: "Internal server error",catchError });
     }
   };
+  const WebHooksUnique = async()=>{}
   const GetCSV = async (req, res) => {
     try {
       
@@ -54,7 +62,7 @@ const addUniqueFile = async (req, res) => {
     try {
       const getCSV = await BlogUniqueModel.getUniqueByName()
       console.log(getCSV[0].content)
-      const theJSONDataU = await axios.get(`https://python-server-cubi.azurewebsites.net/uniqueFolder/${getCSV[0]?.content}`);
+      const theJSONDataU = await axios.get(`http://4.213.60.40:8000/uniqueFolder/${getCSV[0]?.content}`);
       res.send({
         message: "All recorded files CSV",
         theJSON:theJSONDataU?.data
