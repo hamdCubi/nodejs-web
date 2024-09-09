@@ -61,7 +61,8 @@ class BlogCSVModel {
           $project: {
             fileName: 1,
             refLinksFileName: 1,
-            "linkDetails.siteLink": 1, // Only include necessary fields
+            "linkDetails.siteLink": 1,
+             timestamp:1 // Only include necessary fields
           },
         },
       ]);

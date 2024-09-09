@@ -5,6 +5,7 @@ const contentSchema = new mongoose.Schema({
     baseFileId: mongoose.Schema.Types.ObjectId,
     sourceFileId: mongoose.Schema.Types.ObjectId,
     content: JSON,
+    csv:String,
     timestamp: { type: Date, default: Date.now }
   });
 
@@ -12,12 +13,13 @@ const Unique = mongoose.model("unique", contentSchema);
 
 class BlogUniqueModel {
  
-  static async AddNewUniqueFile(baseFileId,sourceFileId,content) {
+  static async AddNewUniqueFile(baseFileId,sourceFileId,content ,csv) {
     try {
       const newFileDat = new Unique({
         baseFileId:new ObjectId(baseFileId),
         sourceFileId:new ObjectId(sourceFileId),
         content,
+        csv,
         
         timestamp:Date.now()
       });
@@ -40,7 +42,7 @@ class BlogUniqueModel {
   }
   static async getUniqueByName() {
     try {
-      const links = await Unique.find({}, 'content _id').lean();
+      const links = await Unique.find({}, 'content csv _id').lean();
       return links;
     } catch (error) {
       console.error('Error in BlogModel.getLinks:', error);
@@ -59,7 +61,7 @@ class BlogUniqueModel {
   }
   static async CheckByBaseSorce(baseFileId,sourceFileId) {
     try {
-      const links = await Unique.findOne({baseFileId:new ObjectId(baseFileId),sourceFileId:new ObjectId(sourceFileId)},"content _id timestamp");
+      const links = await Unique.findOne({baseFileId:new ObjectId(baseFileId),sourceFileId:new ObjectId(sourceFileId)},"content csv _id timestamp");
       return links;
     } catch (error) {
       console.error('Error in BlogModel.getLinks:', error);

@@ -25,33 +25,6 @@ const io = new Server(server, {
 // Map to store connected users and their socket IDs
 const connectedUsers = new Map();
 
-// Middleware for Socket.IO
-io.use((socket, next) => {
-    // You can add authentication or other middleware here if needed
-    next();
-});
-
-// Handle new connections
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-  socket.on('authenticate', (userId) => {
-    connectedUsers.set(userId, socket.id);
-    console.log(`User ${userId} authenticated with socket ID ${socket.id}`);
-    console.log('Connected Users:', connectedUsers); // Add this log
-  });
-  socket.on('disconnect', () => {
-    connectedUsers.forEach((id, userId) => {
-      if (id === socket.id) {
-        connectedUsers.delete(userId);
-      }
-    });
-    console.log('User disconnected:', socket.id);
-    console.log('Connected Users:', connectedUsers); // Add this log
-  });
-});
-
-// Making Socket.IO globally available
-app.set('socketio', io);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -80,11 +53,12 @@ const authRoutes = require('./routes/AuthRoutes');
 const blogRoutes = require('./routes/blogsRoute');
 const GoogleAPIRoutes = require('./routes/googelAPIRoute.js');
 const openAIRoutes = require('./routes/openairoute.js');
+const ActivitiesRoutes = require('./routes/activityRoutes.js');
 const { autoUpdater } = require('./controllers/autoUpdate.js');
 
 app.get("/tocheck", async (req, res) => {
     try {
-        const resp = await axios.get("https://python-server-cubi.azurewebsites.net/");
+        const resp = await axios.get("http://4.213.60.40:8000/");
         console.log(resp.data);
         res.send(res.data);
     } catch (error) {
@@ -94,11 +68,39 @@ app.get("/tocheck", async (req, res) => {
 });
 
 app.use('/api/py', Topy);
+app.use('/api/activity', ActivitiesRoutes);
 app.use('/api/webhook', WebHooks);
 app.use('/api/auth', authRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/openai', openAIRoutes);
 app.use('/api/google', GoogleAPIRoutes);
+// Middleware for Socket.IO
+io.use((socket, next) => {
+    // You can add authentication or other middleware here if needed
+    next();
+});
+
+// Handle new connections
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+  socket.on('authenticate', (userId) => {
+    connectedUsers.set(userId, socket.id);
+    console.log(`User ${userId} authenticated with socket ID ${socket.id}`);
+    console.log('Connected Users:', connectedUsers); // Add this log
+  });
+  socket.on('disconnect', () => {
+    connectedUsers.forEach((id, userId) => {
+      if (id === socket.id) {
+        connectedUsers.delete(userId);
+      }
+    });
+    console.log('User disconnected:', socket.id);
+    console.log('Connected Users:', connectedUsers); // Add this log
+  });
+});
+
+// Making Socket.IO globally available
+app.set('socketio', io);
 
 app.use(express.static(path.join(__dirname, '../build')));
 app.use(('/', express.static(path.join(__dirname, '../build'))));
@@ -113,13 +115,14 @@ const options = {
     useUnifiedTopology: true,
 };
 
-const dbName = "blog";
-const uri = "mongodb+srv://muhammadhamdali572:hamdali99332@cluster0.g7j5dka.mongodb.net/blog?retryWrites=true&w=majority";
-
+const swidb = true
+// const uri ="mongodb://localhost:27017/blog"
+const uri ="mongodb+srv://muhammadhamdali572:hamdali99332@cluster0.g7j5dka.mongodb.net/scraaptest?retryWrites=true&w=majority";
+console.log(uri)
 mongoose.connect(uri, options);
 
 mongoose.connection.on('connected', function () {
-    console.log("Mongoose is connected to " + dbName);
+    console.log("Mongoose is connected to " );
 });
 
 mongoose.connection.on('disconnected', function () {

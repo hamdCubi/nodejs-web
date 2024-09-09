@@ -4,24 +4,53 @@ const path = require('path');
 const BlogCSVModel = require('../models/CSVModels');
 const BlogSimilarModel = require('../models/similarContentModels');
 const axios = require("axios")
+const { client } = require("../utils/Database");
+
+const db = client.db("scraaptest")
+
 
 
 const addsimilarFile = async (req, res) => {
-    try {
-      const {BasefileName,similarTital} = req.body; 
+  try {
+      const { BasefileName, similarTital } = req.body; 
 
+      // Split the titles into an array
+      const titleToArray = similarTital.split("|||").filter(title => title.trim() !== '');
+      console.log(titleToArray)
+      // Create an array of promises for each API request
+      const apiRequests = titleToArray.map(title => {
+          const encodedTitle = encodeURIComponent(title.trim());
+          return axios.get(`http://4.213.60.40:8000/similar_content/${BasefileName}/${encodedTitle}?user_id=${req?.user?._id}`)
+              .then(response => {
+                  try {
+                      // Try to parse JSON if necessary
+                      return typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+                  } catch (parseError) {
+                      console.error("Error parsing JSON:", parseError.message);
+                      return { error: "Invalid JSON format" };
+                  }
+              })
+              .catch(error => {
+                  console.error("API request error:", error.message);
+                  return { error: "API request failed" };
+              });
+      });
 
+      // Wait for all API requests to complete
+      const responses = await Promise.all(apiRequests);
+      // console.log(...responses)
+      const alterResponse= responses.reduce((alt,curr)=>{
+        alt = [...alt, ...curr]
+        return alt
+      },[])
+      // Return all responses as a single JSON array
+      res.status(200).json(alterResponse);
 
-      const ressponse = await axios.get(`http://4.213.60.40:8000/similar_content/${BasefileName}/${similarTital}?user_id=${req?.user?._id}`);
-
-      console.log(ressponse.data)
-      res.send(ressponse?.data);
-    } catch (catchError) {
+  } catch (catchError) {
       console.error("Error in try-catch block:", catchError);
-      res.status(500).json({ error: "Internal server error",catchError });
-    }
-  };
-
+      res.status(500).json({ error: "Internal server error", catchError });
+  }
+};
   const addfileWithSocket = async (data)=>{
     try {
       const {BasefileName,similarTital} = data; 
@@ -31,6 +60,7 @@ const addsimilarFile = async (req, res) => {
       const ressponse = await axios.get(`http://4.213.60.40:8000/similar_content/${BasefileName}/${similarTital}`);
 
       console.log(ressponse.data)
+      
       return ressponse?.data;
     } catch (catchError) {
       console.error("Error in try-catch block:", catchError);
@@ -75,7 +105,7 @@ const addsimilarFile = async (req, res) => {
         }
 
         // If userId is not present in connectedUsers
-        return res.sendStatus(404);  // Adjust status code as necessary
+        return res.status(404).send("user maybe disconnected");  // Adjust status code as necessary
     } catch (catchError) {
         console.error("Error in try-catch block:", catchError.message);
         return res.status(500).json({ error: "Internal server error", catchError });
@@ -98,4 +128,27 @@ const addsimilarFile = async (req, res) => {
       res.status(500).json({ error: "Internal server error",catchError });
     }
   };
-module.exports = {addsimilarFile ,GetSimilars,SimilarWEBHOOK , addfileWithSocket}
+
+
+  
+const getSimilarLogs = async(req,res)=>
+  {
+  
+      try {
+         const Logs =await db.collection("similarLogs").find({}).sort({_id:-1}).toArray()
+          
+          res.send({
+            message:"similar Logs",
+            Logs
+          })
+      } catch (error) {
+        console.log(error)
+
+          res.status(500).send({
+            message:"error while SimilarLogs",
+            error
+          })
+          
+      }
+  }
+module.exports = {addsimilarFile ,GetSimilars,SimilarWEBHOOK , addfileWithSocket ,getSimilarLogs}

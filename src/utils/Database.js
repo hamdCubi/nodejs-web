@@ -1,33 +1,25 @@
-const mongoose = require('mongoose');
+const {MongoClient} =require('mongodb')
 
-const options = {
-  maxPoolSize: 10, // Limit the number of connections in the pool
-  useNewUrlParser: true, // Parse connection string with useNewUrlParser
-  useUnifiedTopology: true, // Use new Server Discover and Monitoring engine
-};
+const swidb = false
+const uri = swidb ?"mongodb://localhost:27017" :"mongodb+srv://muhammadhamdali572:hamdali99332@cluster0.g7j5dka.mongodb.net/scraaptest?retryWrites=true&w=majority";
+const client = new MongoClient(uri);
 
-const dbName = "blogAI";
-const uri = "mongodb://localhost:27017/" + dbName + "?retryWrites=true&w=majority";
-
-mongoose.connect(uri, options);
-
-mongoose.connection.on('connected', function () {
-  console.log("Mongoose is connected to " + dbName);
-});
-
-mongoose.connection.on('disconnected', function () {
-  console.log("Mongoose is disconnected");
-  process.exit(1); // Exit process on disconnect
-});
-
-mongoose.connection.on('error', function (err) {
-  console.log('Mongoose connection error: ', err);
-  process.exit(1); // Exit process on errora
-});
+async function run() {
+    try {
+        await client.connect();
+        console.log("Successfully connected to Atlas");
+    } catch (err) {
+        console.log(err.stack);
+        await client.close();
+        process.exit(1)
+    }
+}
+run().catch(console.dir);
 
 process.on('SIGINT', async function () {
-  await mongoose.connection.close();
-  console.log("Mongoose connection is disconnected due to app termination");
-  process.exit(0);
+    console.log("app is terminating");
+    await client.close();
+    process.exit(0);
 });
 
+module.exports  ={client}
