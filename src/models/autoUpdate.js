@@ -7,6 +7,15 @@ const autoUpdateSchema = new mongoose.Schema({
     }
 });
 
+const examplestracture = new mongoose.Schema({
+    name:{
+        type:String,
+        required:true
+    }
+})
+// const exampleCollectionWithFOllowingStracture = mongoose.model("collection",examplestracture)
+
+// exampleCollectionWithFOllowingStracture.de
 const LinkFiles = mongoose.model("autoUpdate", autoUpdateSchema);
 
 class AutoUpdateModel {

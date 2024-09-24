@@ -6,7 +6,7 @@ const getLinkActivitiesPending = async(req,res)=>{
 try {
     const checkalready = await  db.collection("activities").find(
         {
-            event:{$in:["LINK_EXTRACTION", "CSV_EXTRACTION"]},
+            event:{$in:["LINK_EXTRACTION", "CSV_EXTRACTION","UNQIUE_COMPARISON"]},
             inProgress:true
         }).sort({ _id: -1 }).toArray()
     res.send(

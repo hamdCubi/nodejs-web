@@ -68,6 +68,15 @@ class BlogUniqueModel {
       throw error;
     }
   }
+  static async DeleteByBaseSorce(baseFileId,sourceFileId) {
+    try {
+      const links = await Unique.deleteOne({baseFileId:new ObjectId(baseFileId),sourceFileId:new ObjectId(sourceFileId)});
+      return links;
+    } catch (error) {
+      console.error('Error in BlogModel.getLinks:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = BlogUniqueModel;

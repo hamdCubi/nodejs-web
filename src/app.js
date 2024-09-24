@@ -74,6 +74,25 @@ app.use('/api/auth', authRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/openai', openAIRoutes);
 app.use('/api/google', GoogleAPIRoutes);
+
+
+app.get('/download-csv/:fileName', async (req, res) => {
+  const { fileName } = req.params;
+  const url = `http://4.213.60.40:8000/uniqueFolder/${fileName}`;
+
+  try {
+    const response = await axios.get(url, { responseType: 'arraybuffer' }); // Use arraybuffer for binary data
+    const buffer = Buffer.from(response.data, 'binary');
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+    res.send(buffer);
+  } catch (error) {
+    console.error('Error proxying the CSV file:', error);
+    res.status(500).send('Failed to download file');
+  }
+});
+
 // Middleware for Socket.IO
 io.use((socket, next) => {
     // You can add authentication or other middleware here if needed
